@@ -1,32 +1,65 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+import netflixRoutes from "./routes/netflix";
+import netflixData from "./data/netflix-titles.json";
+import Netflix from "./models/Netflix";
 
-// If you're using one of our datasets, uncomment the appropriate import below
-// to get started!
-// import avocadoSalesData from "./data/avocado-sales.json";
-// import booksData from "./data/books.json";
-// import goldenGlobesData from "./data/golden-globes.json";
-// import netflixData from "./data/netflix-titles.json";
-// import topMusicData from "./data/top-music.json";
+dotenv.config();
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/project-mongo";
 mongoose.connect(mongoUrl);
 mongoose.Promise = Promise;
 
-// Defines the port the app will run on. Defaults to 8080, but can be overridden
-// when starting the server. Example command to overwrite PORT env variable value:
-// PORT=9000 npm start
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 const app = express();
 
-// Add middlewares to enable cors and json body parsing
 app.use(cors());
 app.use(express.json());
 
-// Start defining your routes here
+// Seed database if RESET_DB is true
+if (process.env.RESET_DB) {
+  const seedDatabase = async () => {
+    try {
+      await Netflix.deleteMany({});
+      const formattedData = netflixData.map((item) => ({
+        show_id: item.show_id,
+        title: item.title,
+        director: item.director || "Unknown",
+        cast: item.cast ? item.cast.split(", ") : [],
+        country: item.country || "Unknown",
+        date_added: item.date_added ? new Date(item.date_added) : null,
+        release_year: item.release_year,
+        rating: item.rating || "Unrated",
+        duration: item.duration || "Unknown",
+        listed_in: item.listed_in ? item.listed_in.split(", ") : [],
+        description: item.description,
+        type: item.type,
+      }));
+
+      await Netflix.insertMany(formattedData);
+      console.log("Database seeded successfully!");
+    } catch (error) {
+      console.error("Error seeding database:", error);
+    }
+  };
+  seedDatabase();
+}
+
+// Use Netflix routes
+app.use("/titles", netflixRoutes);
+
+// Documentation endpoint
 app.get("/", (req, res) => {
-  res.send("Hello Technigo!");
+  res.send(`
+    <h1>Netflix Titles API</h1>
+    <p>Available endpoints:</p>
+    <ul>
+      <li><a href="/titles">/titles</a> - Get all Netflix titles</li>
+      <li><a href="/titles/:id">/titles/:id</a> - Get a single Netflix title by ID</li>
+    </ul>
+  `);
 });
 
 // Start the server

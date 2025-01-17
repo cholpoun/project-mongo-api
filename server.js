@@ -55,7 +55,7 @@ app.use("/titles", netflixRoutes);
 app.get("/", (req, res) => {
   res.send(`
     <h1>Netflix Titles API</h1>
-    <p>Available endpoints:</p>
+    <p>Welcome to the Netflix Titles API. Available endpoints:</p>
     <ul>
       <li><a href="/titles">/titles</a> - Get all Netflix titles</li>
       <li><a href="/titles/:id">/titles/:id</a> - Get a single Netflix title by ID</li>

@@ -16,5 +16,4 @@ const NetflixSchema = new mongoose.Schema({
 });
 
 const Netflix = mongoose.model("Netflix", NetflixSchema);
-
 export default Netflix;

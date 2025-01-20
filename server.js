@@ -9,12 +9,23 @@ import netflixRoutes from "./routes/netflix";
 
 dotenv.config();
 
-const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/project-mongo";
-mongoose.connect(mongoUrl);
-mongoose.Promise = Promise;
+const connectToDB = async () => {
+  try {
+    const mongoUri = process.env.MONGO_URI;
+      await mongoose.connect(mongoUri, {
+          autoIndex: true
+      })
+      console.log('Connected to Mongodb Atlas');
+  } catch (error) {
+   console.error(error);
+  }
+}
+
+
 
 const port = process.env.PORT || 3000;
 const app = express();
+connectToDB ()
 
 app.use(cors());
 app.use(express.json());

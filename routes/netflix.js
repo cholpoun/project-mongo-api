@@ -1,12 +1,32 @@
 import express from "express";
 import mongoose from "mongoose";
 import Netflix from "../models/Netflix.js";
+import movie_titles from '../data/netflix-titles.json'; 
 
 const router = express.Router();
 
 // Get all Netflix titles
+router.get("/load-movies", async (req, res)=> {
+  try {
+    const movies = await Netflix.find();
+    if (movies.length > 0) {
+      return res.status(200);
+    }
+  
+    movie_titles.forEach(async (movie) => {
+      await Netflix.create({...movie})
+    })
+  
+    res.send(200)
+  } catch (e) {
+    console.error(e)
+  }
+  
+})
+
 router.get("/", async (req, res) => {
   try {
+    
     const titles = await Netflix.find(); // Fetch all titles
     res.status(200).json(titles);        // Return titles as JSON
   } catch (error) {

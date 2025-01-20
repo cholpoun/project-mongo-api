@@ -15,5 +15,5 @@ const NetflixSchema = new mongoose.Schema({
   type: { type: String, enum: ["Movie", "TV Show"], required: true },
 });
 
-const Netflix = mongoose.model("Netflix", NetflixSchema);
+const Netflix = mongoose.model("Movies", NetflixSchema);
 export default Netflix;

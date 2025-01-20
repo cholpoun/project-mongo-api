@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import netflixData from "./data/netflix-titles.json";
 import Netflix from "./models/Netflix";
 import netflixRoutes from "./routes/netflix";
 

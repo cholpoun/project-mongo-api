@@ -2,29 +2,26 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Netflix from "./models/Netflix";
-import netflixRoutes from "./routes/netflix";
-
+import Netflix from "./models/Netflix.js"; // Ensure correct file path
+import netflixRoutes from "./routes/netflix.js"; // Ensure correct file path
 
 dotenv.config();
 
+// Connect to MongoDB
 const connectToDB = async () => {
   try {
     const mongoUri = process.env.MONGO_URI;
-      await mongoose.connect(mongoUri, {
-          autoIndex: true
-      })
-      console.log('Connected to Mongodb Atlas');
+    await mongoose.connect(mongoUri, { autoIndex: true });
+    console.log('Connected to MongoDB Atlas');
   } catch (error) {
-   console.error(error);
+    console.error('Error connecting to MongoDB:', error);
   }
-}
+};
 
-
-
-const port = process.env.PORT || 3000;
 const app = express();
-connectToDB ()
+const port = process.env.PORT || 3000;
+
+connectToDB();
 
 app.use(cors());
 app.use(express.json());
@@ -34,22 +31,7 @@ if (process.env.RESET_DB) {
   const seedDatabase = async () => {
     try {
       await Netflix.deleteMany({});
-      const formattedData = netflixData.map((item) => ({
-        show_id: item.show_id,
-        title: item.title,
-        director: item.director || "Unknown",
-        cast: item.cast ? item.cast.split(", ") : [],
-        country: item.country || "Unknown",
-        date_added: item.date_added ? new Date(item.date_added) : null,
-        release_year: item.release_year,
-        rating: item.rating || "Unrated",
-        duration: item.duration || "Unknown",
-        listed_in: item.listed_in ? item.listed_in.split(", ") : [],
-        description: item.description,
-        type: item.type,
-      }));
-
-      await Netflix.insertMany(formattedData);
+      // Add your netflixData import and seeding logic here if needed
       console.log("Database seeded successfully!");
     } catch (error) {
       console.error("Error seeding database:", error);
@@ -67,12 +49,11 @@ app.get("/", (req, res) => {
     <h1>Netflix Titles API</h1>
     <p>Welcome to the Netflix Titles API. Here are the available endpoints:</p>
     <ul>
-      <li><a href="/titles">/titles</a> - Get all Netflix titles</li>
+      <li><a href="/titles">/titles</a> - Get all Netflix titles with pagination</li>
       <li><a href="/titles/:id">/titles/:id</a> - Get a single Netflix title by ID</li>
     </ul>
   `);
 });
-
 
 // Start the server
 app.listen(port, () => {

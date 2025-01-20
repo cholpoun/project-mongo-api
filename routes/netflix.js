@@ -1,7 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
 import Netflix from "../models/Netflix.js";
-import movie_titles from '../data/netflix-titles.json'; 
 
 const router = express.Router();
 
